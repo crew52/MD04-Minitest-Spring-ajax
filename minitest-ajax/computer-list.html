@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer List</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h2>Computer List</h2>
+
+<label for="searchInput">Search Name:</label>
+<input type="text" id="searchInput" placeholder="Enter name..." />
+<button id="searchButton">Search</button>
+
+<label for="pageSize">Page Size:</label>
+<select id="pageSize">
+    <option value="5">5</option>
+    <option value="10" selected>10</option>
+    <option value="20">20</option>
+    <option value="50">50</option>
+</select>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Code</th>
+        <th>Name</th>
+        <th>Producer</th>
+        <th>Type</th>
+    </tr>
+    </thead>
+    <tbody id="computerTableBody">
+    <!-- Data will be inserted here -->
+    </tbody>
+</table>
+
+<button id="prevPage">Previous</button>
+<span id="pageInfo"></span>
+<button id="nextPage">Next</button>
+
+<script src="computer.js"></script>
+
+</body>
+</html>
