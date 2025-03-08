@@ -23,7 +23,7 @@ function loadComputers() {
                         <td>${computer.code}</td>
                         <td>${computer.name}</td>
                         <td>${computer.producer}</td>
-                        <td>${computer.type.name}</td>
+                        <td>${computer.type && computer.type.id ? computer.type.name : "Unknown"}</td>
                         <td>
                             <button onclick="viewDetail(${computer.id})">Detail</button>
                             <button onclick="editComputer(${computer.id})">Edit</button>

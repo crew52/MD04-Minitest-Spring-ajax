@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add New Type</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    form {
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    a {
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+<form>
+  <h2>Add New Type</h2>
+  <input type="text" id="typeName" placeholder="Enter type name">
+  <button type="button" onclick="addType()">Add Type</button>
+  <a href="list-types.html">Back to List</a>
+</form>
+
+<script>
+  function addType() {
+    let typeName = $("#typeName").val().trim();
+    if (typeName === "") {
+      alert("Please enter a type name!");
+      return;
+    }
+
+    $.ajax({
+      url: "http://localhost:8080/api/types",
+      method: "POST",
+      contentType: "application/json",
+      data: JSON.stringify({ name: typeName }),
+      success: function () {
+        alert("Type added successfully!");
+        window.location.href = "types-list.html"; // Redirect to list page
+      },
+      error: function () {
+        alert("Failed to add new type!");
+      }
+    });
+  }
+</script>
+</body>
+</html>
