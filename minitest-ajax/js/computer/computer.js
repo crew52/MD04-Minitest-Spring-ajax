@@ -1,21 +1,49 @@
+
 let currentPage = 0;
 let pageSize = 10;
 let totalPages = 1;
 let searchQuery = "";
+let selectedTypeId = ""; // Mặc định không lọc theo type
 
+// Load danh sách loại máy tính để tạo dropdown filter
+function loadTypes() {
+    $.ajax({
+        url: "http://localhost:8080/api/types",
+        method: "GET",
+        success: function (response) {
+            $("#typeFilter").empty();
+            $("#typeFilter").append('<option value="">All Types</option>'); // Lựa chọn mặc định
+
+            response.forEach(type => {
+                $("#typeFilter").append(`<option value="${type.id}">${type.name}</option>`);
+            });
+        },
+        error: function () {
+            alert("Failed to load types!");
+        }
+    });
+}
+
+// Load danh sách máy tính dựa trên bộ lọc
 function loadComputers() {
-    let url = searchQuery
-        ? `http://localhost:8080/api/computers/search?search=${searchQuery}&page=${currentPage}&size=${pageSize}`
-        : `http://localhost:8080/api/computers?page=${currentPage}&size=${pageSize}`;
+    let url;
+
+    if (selectedTypeId) {
+        url = `http://localhost:8080/api/types/view-type/${selectedTypeId}`;
+    } else {
+        url = searchQuery
+            ? `http://localhost:8080/api/computers/search?search=${searchQuery}&page=${currentPage}&size=${pageSize}`
+            : `http://localhost:8080/api/computers?page=${currentPage}&size=${pageSize}`;
+    }
 
     $.ajax({
         url: url,
         method: "GET",
-        success: function(response) {
-            const computers = response.content;
-            totalPages = response.totalPages;
-            $("#computerTableBody").empty();
+        success: function (response) {
+            const computers = selectedTypeId ? response : response.content;
+            totalPages = selectedTypeId ? 1 : response.totalPages; // Nếu lọc theo type, chỉ có 1 trang
 
+            $("#computerTableBody").empty();
             computers.forEach(computer => {
                 $("#computerTableBody").append(`
                     <tr>
@@ -37,72 +65,55 @@ function loadComputers() {
             $("#prevPage").prop("disabled", currentPage === 0);
             $("#nextPage").prop("disabled", currentPage >= totalPages - 1);
         },
-        error: function() {
+        error: function () {
             alert("Failed to load data!");
         }
     });
 }
 
-// Xử lý xem chi tiết
-function viewDetail(id) {
-    window.location.href = `computer-detail.html?id=${id}`;
-}
-
-// Xử lý chỉnh sửa
-function editComputer(id) {
-    window.location.href = `edit-computer.html?id=${id}`;
-}
-
-// Xử lý xóa
-function deleteComputer(id) {
-    if (confirm("Are you sure you want to delete this computer?")) {
-        $.ajax({
-            url: `http://localhost:8080/api/computers/${id}`,
-            type: "DELETE",
-            success: function () {
-                alert("Computer deleted successfully!");
-                loadComputers(); // Refresh danh sách sau khi xóa
-            },
-            error: function () {
-                alert("Error deleting computer!");
-            }
-        });
-    }
-}
-
-
-$(document).ready(function() {
+// Khi trang web load, tải danh sách loại máy và danh sách máy tính
+$(document).ready(function () {
+    loadTypes();
     loadComputers();
 
-    $("#prevPage").click(function() {
+    $("#prevPage").click(function () {
         if (currentPage > 0) {
             currentPage--;
             loadComputers();
         }
     });
 
-    $("#nextPage").click(function() {
+    $("#nextPage").click(function () {
         if (currentPage < totalPages - 1) {
             currentPage++;
             loadComputers();
         }
     });
 
-    $("#pageSize").change(function() {
+    $("#pageSize").change(function () {
         pageSize = parseInt($(this).val());
         currentPage = 0;
         loadComputers();
     });
 
-    $("#searchButton").click(function() {
+    $("#searchButton").click(function () {
         searchQuery = $("#searchInput").val().trim();
         currentPage = 0;
         loadComputers();
     });
 
-    $("#searchInput").keypress(function(event) {
+    $("#searchInput").keypress(function (event) {
         if (event.which === 13) {
             $("#searchButton").click();
         }
     });
+
+    // Khi người dùng thay đổi bộ lọc loại máy tính
+    $("#typeFilter").change(function () {
+        selectedTypeId = $(this).val();
+        currentPage = 0;
+        loadComputers();
+    });
 });
+
+
