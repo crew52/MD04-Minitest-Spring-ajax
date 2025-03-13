@@ -67,7 +67,8 @@ public class SecurityConfig {
                         auth -> auth
                                 .requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
                                 .requestMatchers("/api/login").permitAll()
-                                .requestMatchers("/api/computers").authenticated()
+                                .requestMatchers("/api/computers/**").permitAll()
+                                .requestMatchers("/api/types/**").permitAll()
                 )
                 .build();
     }
