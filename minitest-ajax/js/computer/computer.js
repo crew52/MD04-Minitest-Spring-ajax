@@ -27,25 +27,29 @@ function loadTypes() {
 // Load danh sách máy tính dựa trên bộ lọc
 function loadComputers() {
     let url;
-
-    if (selectedTypeId) {
-        url = `http://localhost:8080/api/types/view-type/${selectedTypeId}`;
-    } else {
-        url = searchQuery
-            ? `http://localhost:8080/api/computers/search?search=${searchQuery}&page=${currentPage}&size=${pageSize}`
-            : `http://localhost:8080/api/computers?page=${currentPage}&size=${pageSize}`;
+    let token = getToken();
+    if (token==null) {
+        window.location.href = "../../html/login/login.html";
     }
+    else {
+        if (selectedTypeId) {
+            url = `http://localhost:8080/api/types/view-type/${selectedTypeId}`;
+        } else {
+            url = searchQuery
+                ? `http://localhost:8080/api/computers/search?search=${searchQuery}&page=${currentPage}&size=${pageSize}`
+                : `http://localhost:8080/api/computers?page=${currentPage}&size=${pageSize}`;
+        }
 
-    $.ajax({
-        url: url,
-        method: "GET",
-        success: function (response) {
-            const computers = selectedTypeId ? response : response.content;
-            totalPages = selectedTypeId ? 1 : response.totalPages; // Nếu lọc theo type, chỉ có 1 trang
+        $.ajax({
+            url: url,
+            method: "GET",
+            success: function (response) {
+                const computers = selectedTypeId ? response : response.content;
+                totalPages = selectedTypeId ? 1 : response.totalPages; // Nếu lọc theo type, chỉ có 1 trang
 
-            $("#computerTableBody").empty();
-            computers.forEach(computer => {
-                $("#computerTableBody").append(`
+                $("#computerTableBody").empty();
+                computers.forEach(computer => {
+                    $("#computerTableBody").append(`
                     <tr>
                         <td>${computer.id}</td>
                         <td>${computer.code}</td>
@@ -59,16 +63,17 @@ function loadComputers() {
                         </td>
                     </tr>
                 `);
-            });
+                });
 
-            $("#pageInfo").text(`Page ${currentPage + 1} of ${totalPages}`);
-            $("#prevPage").prop("disabled", currentPage === 0);
-            $("#nextPage").prop("disabled", currentPage >= totalPages - 1);
-        },
-        error: function () {
-            alert("Failed to load data!");
-        }
-    });
+                $("#pageInfo").text(`Page ${currentPage + 1} of ${totalPages}`);
+                $("#prevPage").prop("disabled", currentPage === 0);
+                $("#nextPage").prop("disabled", currentPage >= totalPages - 1);
+            },
+            error: function () {
+                alert("Failed to load data!");
+            }
+        });
+    }
 }
 
 // Khi trang web load, tải danh sách loại máy và danh sách máy tính
@@ -115,5 +120,22 @@ $(document).ready(function () {
         loadComputers();
     });
 });
+
+// token
+
+// viet lay du lieu tu ls
+function getToken(){
+    let token = localStorage.getItem('token');
+    return token;
+}
+// phai dang nhap moi co token
+// localStorage.setItem("token", token)
+
+function getName() {
+    let name = localStorage.getItem('name');
+    document.getElementById("name").innerText = name;
+}
+
+getName()
 
 
