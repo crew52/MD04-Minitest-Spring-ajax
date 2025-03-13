@@ -1,6 +1,7 @@
 package codegym.c10.minispring.service.impl;
 
 
+import codegym.c10.minispring.configuration.dto.UserPrinciple;
 import codegym.c10.minispring.model.User;
 import codegym.c10.minispring.repository.UserRepo;
 import codegym.c10.minispring.service.IUserService;
